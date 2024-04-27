@@ -32,7 +32,7 @@ def generate_ships(board):
 
 '''
 This function prints the board where the players ships are visible and the computers arent.
-'''
+''' 
 def print_board(board, show_ships=False, player_board=True):
     print("   1  2  3  4  5  6  7  8  9 10")
     for i in range(10):
@@ -62,26 +62,26 @@ to choose where to hit the ships. Using loops whiles and fors to give the unlimi
 It will then print the final scores of each player, and ask it they want to save.
 '''
 def play_game():
-    #Generate ship positions, and start the game loop
+    # Initialize both boards for it to play
     player_board = [["-" for _ in range(10)] for _ in range(10)]
     computer_board = [["-" for _ in range(10)] for _ in range(10)]
     
-    #Display player's board and generate ship positions
+    #Generates the positions at random
     print("Player's board:")
     player_positions = generate_ships(player_board)
-    print_board(player_board)
+    print_board(player_board, show_ships=True) #Shows only the players ships
+    
     print("------------")
     
-    #Display computer's board and generate ship positions
     print("Computer's board:")
     computer_positions = generate_ships(computer_board)
-    print_board(computer_board)
+    print_board(computer_board, show_ships=False) #Doesn't show the enemy's ships
     
     player_score = 0
     computer_score = 0
 
     while True:
-        # Player's turn: Take input, check for hit/miss, update scores, and display boards
+        # Turno del jugador
         while True:
             player_guess = input("Enter your guess (row, col): ").split(",")
             if len(player_guess) == 2:
@@ -90,7 +90,7 @@ def play_game():
                 print("Invalid input. Please enter both row and column coordinates separated by a comma.")
         player_row, player_col = int(player_guess[0]) - 1, int(player_guess[1]) - 1
         
-        # Check if player hits a ship
+        #Loop to check if a player hits the ship
         if computer_board[player_row][player_col] == "O":
             print("Hit!")
             computer_board[player_row][player_col] = "X"
@@ -106,11 +106,12 @@ def play_game():
             print("Miss!")
             computer_board[player_row][player_col] = "O"
             player_score += 2
-    
+        
+        #Turno de la compu
         computer_row = random.randint(0, 9)
         computer_col = random.randint(0, 9)
         
-        # Check if computer hits a ship
+        #Loop para checar si la compu le dio a una nave
         if player_board[computer_row][computer_col] == "O":
             print("Computer hit your ship!")
             player_board[computer_row][computer_col] = "X"
@@ -127,14 +128,12 @@ def play_game():
             player_board[computer_row][computer_col] = "O"
             computer_score += 2
         
-        # Display updated boards
         print("Your board:")
-        print_board(player_board)
+        print_board(player_board, show_ships=True)
         print("------------")
         print("Computer's board:")
-        print_board(computer_board)
+        print_board(computer_board, show_ships=False)
         
-        # Check for game end conditions
         if all(len(positions) == 0 for positions in computer_positions.values()):
             print("Congratulations! You sunk all of the computer's ships!")
             save_score(player_score)
@@ -144,9 +143,9 @@ def play_game():
             save_score(player_score)
             break
     
-    # Print the final scores
     print("Your score:", player_score)
     print("Computer's score:", computer_score)
+
     
 '''
 Save score will save the scores the program printed before. It will ask the user if it wants to save the socres.
@@ -163,20 +162,16 @@ def save_score(score):
 
 # This function only reads the previous scores the file has
 def previous_scores():
-    try:
-        with open("scores.txt", "r") as file:
-            scores = file.readlines()
-            if scores:
-                print("Previous Scores:")
-                for score in scores:
-                    print(score.strip())
-            else:
-                print("No previous scores.")
+    file = open("scores.txt", "r")
+    scores = file.readlines()
+    if scores:
+        print("Previous Scores:")
+        for score in scores:
+            print(score.strip())
+    else:
+        print("No previous scores.")
     file.close()
 
-'''
-This function will read the game instructions that are found in another text file.
-'''
 def game_instructions():
     with open("rulesofgame.txt", "r") as file:
         print(file.read())
